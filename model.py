@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional, Set
+from typing import List, Optional, Set
 
 
 @dataclass(frozen=True)
@@ -27,6 +27,13 @@ class Batch:
     def __hash__(self) -> int:
         return hash(self.reference)
 
+    def __gt__(self, other: Batch):
+        if self.eta is None:
+            return False
+        if other.eta is None:
+            return True
+        return self.eta > other.eta
+
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
             self._allocations.add(line)
@@ -45,3 +52,9 @@ class Batch:
 
     def can_allocate(self, line: OrderLine) -> bool:
         return self.sku == line.sku and self.available_quantity >= line.qty
+
+
+def allocate(line: OrderLine, batches: List[Batch]):
+    batch = next(b for b in sorted(batches) if b.can_allocate(line))
+    batch.allocate(line)
+    return batch.reference
