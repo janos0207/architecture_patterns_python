@@ -4,7 +4,8 @@ from datetime import date
 from typing import List, Optional, Set
 
 
-@dataclass(frozen=True)
+# pytest fails at frozen: https://github.com/cosmicpython/code/issues/17
+@dataclass(unsafe_hash=True)  # to be frozen=True
 class OrderLine:
     orderid: str
     sku: str
