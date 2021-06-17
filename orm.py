@@ -1,7 +1,7 @@
 from sqlalchemy.orm import mapper, relationship
 from sqlalchemy.schema import MetaData, Table
 from sqlalchemy.sql.schema import Column
-from sqlalchemy.sql.sqltypes import Integer, String
+from sqlalchemy.sql.sqltypes import Date, Integer, String
 import model
 
 metadata = MetaData()
@@ -14,6 +14,16 @@ order_lines = Table(
     Column('orderid', String(255)),
 )
 
+batches = Table(
+    'batches', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('reference', String(255)),
+    Column('sku', String(255)),
+    Column('_purchased_quantity', Integer, nullable=False),
+    Column('eta', Date, nullable=True),
+)
+
 
 def start_mappers():
     line_mapper = mapper(model.OrderLine, order_lines)
+    mapper(model.Batch, batches)
