@@ -44,3 +44,13 @@ def test_retrieving_batches(session):
     ]
 
     assert session.query(model.Batch).all() == expected
+
+
+def test_saving_batch(session):
+    batch = model.Batch("batch1", "sku1", 100, eta=None)
+    session.add(batch)
+    session.commit()
+    rows = session.execute(
+        'SELECT reference, sku, _purchased_quantity, eta FROM "batches"'
+    )
+    assert list(rows) == [("batch1", "sku1", 100, None)]
